@@ -5,12 +5,11 @@ import numpy as np
 import itertools
 import torch
 from sac import SAC
-from tensorboardX import SummaryWriter
+#from tensorboardX import SummaryWriter
 from replay_memory import ReplayMemory
 
 parser = argparse.ArgumentParser(description='PyTorch REINFORCE example')
-parser.add_argument('--env-name', default="HalfCheetah-v2",
-                    help='name of the environment to run')
+
 parser.add_argument('--policy', default="Gaussian",
                     help='algorithm to use: Gaussian | Deterministic')
 parser.add_argument('--eval', type=bool, default=True,
@@ -47,7 +46,7 @@ args = parser.parse_args()
 
 # Environment
 # env = NormalizedActions(gym.make(args.env_name))
-env = gym.make(args.env_name)
+env = create_block_stack_push_env(num_blocks_in_stack=3, num_distractor_blocks=0, episode_length=10, rotations=True)#gym.make('PybulletBlockStackPushEnv-v0')
 torch.manual_seed(args.seed)
 np.random.seed(args.seed)
 env.seed(args.seed)
@@ -84,11 +83,11 @@ for i_episode in itertools.count(1):
                 # Update parameters of all the networks
                 critic_1_loss, critic_2_loss, policy_loss, ent_loss, alpha = agent.update_parameters(memory, args.batch_size, updates)
 
-                writer.add_scalar('loss/critic_1', critic_1_loss, updates)
-                writer.add_scalar('loss/critic_2', critic_2_loss, updates)
-                writer.add_scalar('loss/policy', policy_loss, updates)
-                writer.add_scalar('loss/entropy_loss', ent_loss, updates)
-                writer.add_scalar('entropy_temprature/alpha', alpha, updates)
+                #writer.add_scalar('loss/critic_1', critic_1_loss, updates)
+                #writer.add_scalar('loss/critic_2', critic_2_loss, updates)
+                #writer.add_scalar('loss/policy', policy_loss, updates)
+                #writer.add_scalar('loss/entropy_loss', ent_loss, updates)
+                #writer.add_scalar('entropy_temprature/alpha', alpha, updates)
                 updates += 1
 
         next_state, reward, done, _ = env.step(action) # Step
@@ -107,7 +106,7 @@ for i_episode in itertools.count(1):
     if total_numsteps > args.num_steps:
         break
 
-    writer.add_scalar('reward/train', episode_reward, i_episode)
+    #writer.add_scalar('reward/train', episode_reward, i_episode)
     print("Episode: {}, total numsteps: {}, episode steps: {}, reward: {}".format(i_episode, total_numsteps, episode_steps, round(episode_reward, 2)))
 
     if i_episode % 10 == 0 and args.eval == True:
@@ -129,7 +128,7 @@ for i_episode in itertools.count(1):
         avg_reward /= episodes
 
 
-        writer.add_scalar('avg_reward/test', avg_reward, i_episode)
+        #writer.add_scalar('avg_reward/test', avg_reward, i_episode)
 
         print("----------------------------------------")
         print("Test Episodes: {}, Avg. Reward: {}".format(episodes, round(avg_reward, 2)))
