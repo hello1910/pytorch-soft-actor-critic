@@ -2,7 +2,7 @@ import argparse
 #import datetime
 import gym
 import numpy as np
-import itertools
+#import itertools
 import torch
 from sac import SAC
 from numpy import *
