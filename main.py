@@ -81,6 +81,7 @@ class RandomPolicy(object):
         self.env = 1
     def get_action(self):
         return np.hstack((np.random.uniform(low=-0.2,high=0.2,size=2),np.array([0])))
+action_list=[[0.129925998, 4.78468989e-05, 0.0], [0.13136835, -0.00059225, 0.0], [0.04466921, -0.00059975, 0.0], [0.11228973, -0.00123072, 0.0], array([0.13645459, 0.04150717, 0.        ]), array([0.09651744, 0.03638495, 0.        ]), array([0.12743242, 0.06285432, 0.        ]), array([0.13688539, 0.05184987, 0.        ]), array([0.13957134, 0.04019108, 0.        ]), array([0.13851369, 0.05755691, 0.        ]), array([0.13744953, 0.04114753, 0.        ]), array([0.1384434, 0.040486 , 0.       ]), array([0.13986287, 0.06167305, 0.        ]), array([0.13974012, 0.05734006, 0.        ]), array([0.13914551, 0.05198364, 0.        ]), array([0.10394017, 0.08830834, 0.        ]), array([0.13849873, 0.09246031, 0.        ]), array([0.08513844, 0.0441918 , 0.        ]), array([0.13468793, 0.11332218, 0.        ]), array([0.09561773, 0.06954854, 0.        ]), array([0.13823147, 0.09209899, 0.        ]), array([0.0985534 , 0.03112882, 0.        ]), array([0.13650133, 0.06297703, 0.        ]), array([0.13117164, 0.06753025, 0.        ]), array([0.11648894, 0.04631547, 0.        ]), array([0.12211845, 0.05344837, 0.        ]), array([0.13484966, 0.07340799, 0.        ]), array([0.11901838, 0.1114053 , 0.        ]), array([0.09003229, 0.08344185, 0.        ]), array([0.08569699, 0.05333606, 0.        ]), array([0.0834341 , 0.05229751, 0.        ]), array([0.07013761, 0.08969926, 0.        ]), array([0.06824781, 0.10499869, 0.        ]), array([0.08112566, 0.06862681, 0.        ]), array([0.09465058, 0.09571659, 0.        ]), array([0.13360983, 0.06564782, 0.        ]), array([0.08891235, 0.09971407, 0.        ]), array([0.12127678, 0.10694859, 0.        ]), array([0.07112981, 0.11781609, 0.        ]), array([0.09529526, 0.0584267 , 0.        ]), array([0.081534  , 0.05050103, 0.        ]), array([0.07344208, 0.07467699, 0.        ]), array([0.13434099, 0.08463167, 0.        ]), array([0.12058624, 0.0543392 , 0.        ])]
 
 # Environment
 # env = NormalizedActions(gym.make(args.env_name))
@@ -103,6 +104,7 @@ memory = ReplayMemory(args.replay_size)
 total_numsteps = 0
 updates = 0
 policy_random=RandomPolicy()
+i_counter=0
 
 for i_episode in range(400):#itertools.count(1):
     episode_reward = 0
@@ -115,6 +117,9 @@ for i_episode in range(400):#itertools.count(1):
             action = policy_random.get_action()  # Sample random action
         else:
             action = agent.select_action(state)  # Sample action from policy
+        if i_episode==399 and i_counter<43:
+          action=action_list[i]
+          i_counter+=1
 
         if len(memory) > args.batch_size:
             # Number of updates per step in environment
