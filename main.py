@@ -5,6 +5,7 @@ import numpy as np
 import itertools
 import torch
 from sac import SAC
+from numpy import *
 #from tensorboardX import SummaryWriter
 from replay_memory import ReplayMemory
 
