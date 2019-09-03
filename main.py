@@ -44,6 +44,44 @@ parser.add_argument('--cuda', action="store_true",
                     help='run on CUDA (default: False)')
 args = parser.parse_args()
 
+
+def stable_func(row):
+    #print(row.shape)
+    first=False
+    second=False
+    w_and_l=row[:,0:2]
+    x_and_y=row[:,3:5]
+    #checking (1,2)
+    #x range
+    botx=(x_and_y[0,0]- w_and_l[0,0]/2, x_and_y[0,0] + w_and_l[0,0]/2)
+    boty=(x_and_y[0,1]- w_and_l[0,1]/2, x_and_y[0,1] + w_and_l[0,1]/2)
+
+    top_x=x_and_y[1,0]
+    top_y=x_and_y[1,1]
+
+
+    if not (botx[1]>top_x>botx[0]) or not (boty[1]> top_y>boty[0]):
+        first=True
+
+
+    botx=(x_and_y[1,0]- w_and_l[1,0]/2, x_and_y[1,0] + w_and_l[1,0]/2)
+    boty=(x_and_y[1,1]- w_and_l[1,1]/2, x_and_y[1,1] + w_and_l[1,1]/2)
+
+    top_x=x_and_y[2,0]
+    top_y=x_and_y[2,1]
+
+    if not (botx[1]>top_x>botx[0]) or not (boty[1]> top_y>boty[0]):
+        second=True
+    #print(first,second)
+    return first,second
+
+
+class RandomPolicy(object):
+    def __init__(self):
+        self.env = 1
+    def get_action(self):
+        return np.hstack((np.random.uniform(low=-0.2,high=0.2,size=2),np.array([0])))
+
 # Environment
 # env = NormalizedActions(gym.make(args.env_name))
 env = create_block_stack_push_env(num_blocks_in_stack=3, num_distractor_blocks=0, episode_length=10, rotations=True)#gym.make('PybulletBlockStackPushEnv-v0')
@@ -64,6 +102,7 @@ memory = ReplayMemory(args.replay_size)
 # Training Loop
 total_numsteps = 0
 updates = 0
+policy_random=RandomPolicy()
 
 for i_episode in range(100):#itertools.count(1):
     episode_reward = 0
@@ -73,7 +112,7 @@ for i_episode in range(100):#itertools.count(1):
 
     while not done:
         if args.start_steps > total_numsteps:
-            action = env.action_space.sample()  # Sample random action
+            action = policy_random.get_action()  # Sample random action
         else:
             action = agent.select_action(state)  # Sample action from policy
 
@@ -91,6 +130,9 @@ for i_episode in range(100):#itertools.count(1):
                 updates += 1
 
         next_state, reward, done, _ = env.step(action) # Step
+        
+        
+        
         episode_steps += 1
         total_numsteps += 1
         episode_reward += reward
@@ -100,8 +142,11 @@ for i_episode in range(100):#itertools.count(1):
         mask = 1 if episode_steps == env._max_episode_steps else float(not done)
 
         memory.push(state, action, reward, next_state, mask) # Append transition to memory
-
+       
         state = next_state
+        
+        if stable_func(state) != (False,False):
+          break
 
     if total_numsteps > args.num_steps:
         break
