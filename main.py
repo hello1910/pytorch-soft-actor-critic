@@ -44,7 +44,6 @@ parser.add_argument('--cuda', action="store_true",
                     help='run on CUDA (default: False)')
 args = parser.parse_args()
 
-
 def stable_func(row):
     #print(row.shape)
     first=False
