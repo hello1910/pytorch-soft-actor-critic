@@ -28,13 +28,13 @@ parser.add_argument('--seed', type=int, default=456, metavar='N',
                     help='random seed (default: 456)')
 parser.add_argument('--batch_size', type=int, default=256, metavar='N',
                     help='batch size (default: 256)')
-parser.add_argument('--num_steps', type=int, default=101, metavar='N',
+parser.add_argument('--num_steps', type=int, default=30001, metavar='N',
                     help='maximum number of steps (default: 1000000)')
 parser.add_argument('--hidden_size', type=int, default=256, metavar='N',
                     help='hidden size (default: 256)')
 parser.add_argument('--updates_per_step', type=int, default=1, metavar='N',
                     help='model updates per simulator step (default: 1)')
-parser.add_argument('--start_steps', type=int, default=100, metavar='N',
+parser.add_argument('--start_steps', type=int, default=4000, metavar='N',
                     help='Steps sampling random actions (default: 10000)')
 parser.add_argument('--target_update_interval', type=int, default=1, metavar='N',
                     help='Value target update per no. of updates per step (default: 1)')
@@ -104,7 +104,7 @@ total_numsteps = 0
 updates = 0
 policy_random=RandomPolicy()
 
-for i_episode in range(100):#itertools.count(1):
+for i_episode in range(400):#itertools.count(1):
     episode_reward = 0
     episode_steps = 0
     done = False
@@ -180,4 +180,5 @@ for i_episode in range(100):#itertools.count(1):
         print("----------------------------------------")
 
 env.close()
+print("DONE!!!!!!!!!!!")
 
